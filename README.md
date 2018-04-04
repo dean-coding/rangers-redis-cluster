@@ -3,6 +3,7 @@
 本示例使用ListOperation演示的结果:
 
 http://localhost:8080/redis/put-left?leftVal=***
+
 http://localhost:8080/redis/put-right?rightVal=***
 
 http://localhost:8080/redis/range?end=10 //查询结果:
@@ -106,14 +107,20 @@ RedisClusterConfigProperties
 
 使用场景:
 
-	redis是个内存数据库，数据都存在内存中，既然存在内存中，那么大小肯定受服务器内存大小的限制。比如一个64G内存的服务器，一个redis撑死也就能存储64G的数据量，
-	而对于大型网站架构，数据量岂止是64G，有的网站甚至存储了上T的数据量，遇见这种情况，怎么办？
+	redis是个内存数据库，数据都存在内存中，既然存在内存中，那么大小肯定受服务器内存大小的限制。
+	比如一个64G内存的服务器，一个redis撑死也就能存储64G的数据量，而对于大型网站架构，数据量
+	岂止是64G，有的网站甚至存储了上T的数据量，遇见这种情况，怎么办？
 
-      在redis 3.0版本之前，通常是获取key的hashcode，然后取模（mod），但是这种做法的缺点是无法很好的支持动态伸缩要求，一但有节点的增加或者删除操作，都会导致key
-    无法在redis上命中。redis 3.0版本之后开始支持集群（cluster），采用的是哈希槽（hash slot）。CRC16(K)%16384算法(memecached采用的一致性hash算法)决定key
-    对应的slot槽,他可以把多个redis实例整合在一起，形成一个集群。比如100G的数据量，一台服务器存储不下，那我可以将它分散到多台机器上，每个客户端都连接一个redis服
-    务实例，这是一个无中心结构，每个节点 都保存数据和整个集群的状态。每个节点也都知道其他节点所负责的槽。
-      取值的流程:传入的key -> CRC16(K)%16384 决定进入哪个slot槽,slot槽属于哪个node节点,若果不在当前node上,当前node知道改slot对应的node会Redirect过去;
+      在redis 3.0版本之前，通常是获取key的hashcode，然后取模（mod），但是这种做法的缺点是
+      无法很好的支持动态伸缩要求，一但有节点的增加或者删除操作，都会导致key无法在redis上命中。
+      redis 3.0版本之后开始支持集群（cluster），采用的是哈希槽（hash slot）。
+      CRC16(K)%16384算法(memecached采用的一致性hash算法)决定key对应的slot槽,他可以把多个
+      redis实例整合在一起，形成一个集群。比如100G的数据量，一台服务器存储不下，那我可以将它分散
+      到多台机器上，每个客户端都连接一个redis服务实例，这是一个无中心结构，每个节点 都保存数据
+      和整个集群的状态。每个节点也都知道其他节点所负责的槽。 
+      
+      取值的流程:传入的key -> CRC16(K)%16384 决定进入哪个slot槽,slot槽属于哪个node节点,
+      若果不在当前node上,当前node知道改slot对应的node会Redirect过去;
     
 
 可以选择docker 安装配置
@@ -143,7 +150,7 @@ redis.conf修改的配置项:
 	| 7034                 | 7034          |   slave             |                     |
 	| 7035                 | 7035          |   slave              |                     |
 	| 7036                 | 7036          |   slave              |                     |
-	| 7037                 | 7037          | master动态添加/移除      |                     |
+	| 7037                 | 7037          | master动态添加/移除     |                     |
 
 目录结构:
 	
@@ -199,7 +206,7 @@ cd ./redis-3.2.11/src
 
 ./redis-cli -c -p 7031  (-c指定是集群连接,否则的话,会在set,get的时候报错MOVED..)
 	    
-	     -bash-3.2$ redis-cli -c -p 7031
+	      -bash-3.2$ redis-cli -c -p 7031
 		127.0.0.1:7031> get A
 		-> Redirected to slot [6373] located at 127.0.0.1:7032
 		"xiaolang"
