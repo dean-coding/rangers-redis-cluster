@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "redis.mode.cluster",
+  "type": "java.lang.String",
+  "description": "当前redis是否开启集群模式:默认为false"
+}]}
